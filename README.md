@@ -8,6 +8,10 @@ master和slave间采用Thrift框架完成通信
 #### 监控
 待定
 
+#### 存储
++ url存储在redis
++ 解析页面后的内容存储在mongo
+
 #### 优点
 + 配置容易
 
@@ -17,3 +21,5 @@ master和slave间采用Thrift框架完成通信
 + Scrapy
 + tornado
 + thriftpy
+
+
