@@ -1,3 +1,3 @@
 service SpiderService {
-    i32 send_to_slave()
+    string send_to_slave()
 }
