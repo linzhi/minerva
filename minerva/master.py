@@ -1,5 +1,4 @@
-#!/usr/bin/env python2
-# -*- coding = utf-8 -*-
+# -*- coding:utf8 -*-
 
 ################################################################################		
 #		
@@ -8,19 +7,20 @@
 ################################################################################		
 
 """
-spider
 Created on 2017-04-08
 Author: qilinzhi@gmail.com
 """
 
 import os
-import sys
-import logging
 import Queue
 import traceback
+import thriftpy
+
 
 from conf import constant
 from lib import log
+from lib import DbUtils
+from thriftpy.rpc import make_server
 
                  
 class DispatchSpider(object):
@@ -29,28 +29,29 @@ class DispatchSpider(object):
     """
 
     def __init__(self):
+
         self.seed_url = constant.SEED_URL
 
-        self.redis_db = DbUtils.RedisHandler(host=constants.REDIS_SERVER_HOST, 
-                                             port=constants.REDIS_SERVER_PORT)
+        self.redis_db = DbUtils.RedisHandler(host=constant.REDIS_SERVER_HOST, 
+                                             port=constant.REDIS_SERVER_PORT)
 
-    def send_to_salve(self, url=None):
+    def send_to_slave(self, url=None):
         """
-        @brief: 被slave调用，发送url给slave节点
-        """
-
-        pass
-
-    def receive_from_salve(self, url=None):
-        """
-        @brief: 被slave调用，接收待抓取的ur，并保存在redis
+        @brief: 被slave调用，发送待抓取的url给slave节点
         """
 
+        return 111100
+
+    def receive_from_slave(self, url=None):
+        """
+        @brief: 被slave调用，接收待抓取的url，并保存在redis
+        """
         pass
 
     def __get_url_from_reids(self):
         """
         @brief: 从redis中获取要下发给slave机器的url
+        @return: url: 未被抓取过的url
         """
 
         pass
@@ -76,9 +77,20 @@ class DispatchSpider(object):
 
         pass
 
+def main():
+    """
+    @brief: 
+    """
+
+    spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
+
+    server = make_server(spider.SpiderService, DispatchSpider(), '127.0.0.1', 8001)
+    log.info('master serving...')
+    server.serve()
+
+
 if __name__ == "__main__":
-    spider = DispatchSpider()
-    spider.main()
+    main()
 
 
 

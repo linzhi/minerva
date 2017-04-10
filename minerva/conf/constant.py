@@ -15,6 +15,9 @@
 LOG_CONFIG_PATH = "./conf/log.ini"
 LOG_LOGGER_NAME = "spider"
 
+# RPC配置
+THRIFT_FILE = "./conf/spider.thrift"
+
 # Tornado服务器配置
 TORNADO_SERVER_PORT = 8999
 
