@@ -19,7 +19,6 @@ import logging
 import Queue
 import traceback
 
-
 from conf import constant
 from lib import log
                  

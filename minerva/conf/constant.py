@@ -31,8 +31,8 @@ KEY_POI_ERROR_TYPE_INFO = "poi_error_type::id::{0}"
 #Mongo配置
 SPIDER_MONGO_ADDRESS = [{"host":"10.99.22.13", "port":8805}]
 SPIDER_MONGO_DATABASE = "spider"
-SPIDER_MONGO_USER = "jingpin_r"
-SPIDER_MONGO_PASSWD = "r_jingpin"
+SPIDER_MONGO_USER = "test"
+SPIDER_MONGO_PASSWD = "test"
 SPIDER_MONGO_SOURCE_POI_TABLE = "source_url"
 
 
