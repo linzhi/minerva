@@ -38,7 +38,7 @@ class DispatchSpider(object):
         self.url_queue = Queue.Queue()
         self.url_queue.put(constant.KEY_URL.format(self.seed_url))
 
-    def send_to_slave(self):
+    def send_url(self):
         """
         @brief: 被slave调用，发送待抓取的url给slave节点
         """
@@ -60,10 +60,11 @@ class DispatchSpider(object):
 
         return url
 
-    def receive_from_slave(self, url=None):
+    def receive_url(self, url=None):
         """
         @brief: 被slave调用，接收待抓取的url，并保存在redis
         """
+        return "111"
 
     def __get_url_from_reids(self):
         """

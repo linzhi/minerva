@@ -22,7 +22,7 @@ THRIFT_FILE = "./conf/spider.thrift"
 TORNADO_SERVER_PORT = 8999
 
 # 种子url
-SEED_URL = "http://www.renminribao.com"
+SEED_URL = "https://www.zhihu.com/"
 
 # Redis配置
 REDIS_SERVER_HOST = "10.99.22.13"

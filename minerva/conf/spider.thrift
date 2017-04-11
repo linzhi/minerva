@@ -1,3 +1,7 @@
 service SpiderService {
-    string send_to_slave()
+    string send_url()
+}
+
+service SpiderService {
+    string receive_url()
 }
