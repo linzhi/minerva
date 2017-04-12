@@ -37,7 +37,7 @@ class DianpingParser(HtmlParser):
     @classmethod
     def get_poi_info(cls, url):
         urls, content = HtmlParser.get_content(url)
-        return content
+        return urls, content
 
 
 if __name__ == "__main__":

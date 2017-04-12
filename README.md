@@ -26,10 +26,10 @@
     python spider.py
 
 #### 相关的依赖:
-+ pymongo
-+ redis
-+ thriftpy
-+ BeautifulSoup
-+ chardet
++ pymongo (3.4.0)
++ redis (2.10.5)
++ thriftpy (0.3.9)
++ BeautifulSoup (3.2.1)
++ chardet (2.3.0)
 
 
