@@ -35,14 +35,14 @@ class DianpingParser(HtmlParser):
         pass
 
     @classmethod
-    def get_info(cls, url):
+    def get_poi_info(cls, url):
         urls, content = HtmlParser.get_content(url)
         return content
 
 
 if __name__ == "__main__":
     dianping = DianpingParser()
-    print dianping.get_info("http://www.dianping.com/shop/22974252")
+    print dianping.get_poi_info("http://www.dianping.com/shop/22974252")
 
 
 

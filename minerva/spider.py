@@ -84,7 +84,7 @@ class Spider(object):
 
         # 提取爬取的url的链接和内容，如果有，则保存
         if url:
-            urls, content = DianpingParser.get_info(url)
+            urls, content = DianpingParser.get_poi_info(url)
             if urls:
                 self.send_url(urls)
             if content:
