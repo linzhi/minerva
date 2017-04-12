@@ -33,7 +33,8 @@ class HtmlParser(object):
     def __init__(self):
         pass
 
-    def parse_page(self, url):
+    @classmethod
+    def parse_page(cls, url):
         """
         @brief: get html content
         """
@@ -43,7 +44,7 @@ class HtmlParser(object):
         html_page = None
 
         try:
-            response = urllib2.urlopen(req, timeout=self.TIMEOUT)
+            response = urllib2.urlopen(req, timeout=cls.TIMEOUT)
         except Exception as e:
             log.error("parse html fail, url: {}, e: {}".format(url, traceback.format_exc()))
             return None
@@ -60,27 +61,21 @@ class HtmlParser(object):
         
         return html_page
 
-    def get_hyperlinks(self, url):
+    @classmethod
+    def get_content(cls, url):
         """
         @brief: 解析url，获取超链接和url内容
         @return: 返回超链接和url的内容
         """
 
-        html_context = self.parse_page(url)
+        html_context = cls.parse_page(url)
 
         hyperlinks = set()
         if html_context:
             soup_context = BeautifulSoup.BeautifulSoup(html_context)
-
-            # 获取其他站点链接 
             for each_link in soup_context.findAll('a'):
                 hyperlink = urlparse.urljoin(url, each_link.get('href'))
                 hyperlinks.add(hyperlink)
-
-            # 获取图片链接
-            #for each_link in soup_context.findAll('img'):
-            #    hyperlink = urlparse.urljoin(url, each_link.get('src'))
-            #    hyperlinks.add(hyperlink)
 
         return hyperlinks, html_context
 

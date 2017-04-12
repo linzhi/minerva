@@ -19,7 +19,7 @@ import traceback
 from conf import constant
 from lib import log
 from thriftpy.rpc import make_client
-from html_parser import HtmlParser
+from dianping import DianpingParser
 
 
 class Spider(object):
@@ -30,8 +30,6 @@ class Spider(object):
     TIMEOUT = 50000
 
     def __init__(self):
-        self.html_parser = HtmlParser()
-
         spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
         self.master_spider = make_client(spider.SpiderService, '127.0.0.1', 8001, timeout=self.TIMEOUT)
 
@@ -56,7 +54,6 @@ class Spider(object):
         """
 
         try:
-            # urls过多会引发异常，因此分批调用
             count = 0
             tmp_urls = set()
             for url in urls:
@@ -71,7 +68,7 @@ class Spider(object):
             log.error("发送urls给master异常, 异常信息: {}".format(traceback.format_exc()))
             raise RuntimeError("slave发送urls到master失败")
 
-    def save_page(self):
+    def save(self):
         """
         @brief: 将需要的内容保存到mongo
         """
@@ -79,11 +76,19 @@ class Spider(object):
         pass
 
     def main(self):
+        """
+        @brief: Main
+        """
+
         url = self.get_url()
 
+        # 提取爬取的url的链接和内容，如果有，则保存
         if url:
-            urls, content = self.html_parser.get_hyperlinks(url)
-            self.send_url(urls)
+            urls, content = DianpingParser.get_info(url)
+            if urls:
+                self.send_url(urls)
+            if content:
+                self.save(content)
 
 
 if __name__ == "__main__":

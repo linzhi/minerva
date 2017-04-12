@@ -18,7 +18,6 @@ master和slave间方法调用采用Thrift RPC服务框架
 #### 相关的依赖:
 + pymongo
 + redis
-+ Scrapy
 + tornado
 + thriftpy
 

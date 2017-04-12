@@ -37,6 +37,7 @@ class DispatchSpider(object):
         self.redis_db = utils.RedisHandler(host=constant.REDIS_SERVER_HOST,
                                            port=constant.REDIS_SERVER_PORT)
 
+        # 将种子url写到队列
         self.url_queue = Queue.Queue()
         self.url_queue.put(self.seed_url)
 
@@ -58,7 +59,6 @@ class DispatchSpider(object):
         if url != self.seed_url:
             res = self.redis_db.get(redis_key)
             if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") is not None:
-                log.info("url: {} 已经抓取过".format(url))        
                 return ""
 
         # 将抓取过的url写到redis
@@ -93,7 +93,6 @@ class DispatchSpider(object):
         """
 
         spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
-
         server = make_server(spider.SpiderService, DispatchSpider(), '127.0.0.1', 8001, client_timeout=self.CLIENT_TIMEOUT)
         server.serve()
 
