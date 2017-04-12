@@ -81,9 +81,9 @@ class Spider(object):
     def main(self):
         url = self.get_url()
 
-        urls, content = self.html_parser.get_hyperlinks(url)
-
-        self.send_url(urls)
+        if url:
+            urls, content = self.html_parser.get_hyperlinks(url)
+            self.send_url(urls)
 
 
 if __name__ == "__main__":

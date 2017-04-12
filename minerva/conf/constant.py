@@ -30,7 +30,7 @@ REDIS_SERVER_HOST = "10.99.22.13"
 REDIS_SERVER_PORT = 8107
 
 # Redis定义key
-KEY_URL = "{0}"
+KEY_URL = "crawled::url::{0}"
 
 #Mongo配置
 SPIDER_MONGO_ADDRESS = [{"host":"10.99.22.13", "port":8805}]

@@ -38,24 +38,33 @@ class DispatchSpider(object):
                                            port=constant.REDIS_SERVER_PORT)
 
         self.url_queue = Queue.Queue()
-        self.url_queue.put(constant.KEY_URL.format(self.seed_url))
+        self.url_queue.put(self.seed_url)
 
     def send_url(self):
         """
         @brief: 被slave调用，发送待抓取的url给slave节点
+        @return: 如果获取的url已经抓取过，那么返回 "", 否则返回url
         """
 
         # 从url_queue中获取要抓取的url
         if self.url_queue.empty():
-            log.error("抓取队列为空")
-            raise RuntimeError("抓取队列为空")
+            log.error("待抓取的url队列为空")
+            return ""
         else:
             url = self.url_queue.get(True, 1)
+            redis_key = constant.KEY_URL.format(url)
+
+        # 判断非种子url是否已经抓取过
+        if url != self.seed_url:
+            res = self.redis_db.get(redis_key)
+            if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") is not None:
+                log.info("url: {} 已经抓取过".format(url))        
+                return ""
 
         # 将抓取过的url写到redis
-        res = self.redis_db.set(url, 1)
+        res = self.redis_db.set(redis_key, 1)
         if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") is not None:
-            log.info("已经抓取过的url: {} 写入redis成功".format(self.seed_url))
+            log.info("已经抓取过的url: {} 写入redis成功".format(url))
         else:
             log.error("已经抓取过的url写入redis异常, 异常信息: {}".format(traceback.format_exc()))
             raise RuntimeError("写入redis异常")
