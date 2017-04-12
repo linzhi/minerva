@@ -17,11 +17,11 @@
 待定
 
 #### Usage:
-+ 启动master: 
+启动master: 
 
     python master.py
 
-+ 启动slvae:
+启动slave:
 
     python spider.py
 
