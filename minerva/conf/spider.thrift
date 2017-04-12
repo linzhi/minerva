@@ -1,7 +1,5 @@
 service SpiderService {
-    string send_url()
+    string send_url();
+    bool receive_url(1: set<string> urls);
 }
 
-service SpiderService {
-    string receive_url()
-}

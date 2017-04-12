@@ -60,11 +60,20 @@ class DispatchSpider(object):
 
         return url
 
-    def receive_url(self, url=None):
+    def receive_url(self, urls=None):
         """
-        @brief: 被slave调用，接收待抓取的url，并保存在redis
+        @brief: 被slave调用，接收待抓取的url，并保存在Queue
+        @return: Bool
         """
-        return "111"
+
+        if not urls: return None
+
+        for url in urls:
+            url = url.strip().encode('utf8')
+            self.url_queue.put(url)
+
+        log.info("当前待抓取的url个数为: {}".format(self.url_queue.qsize()))
+        return True
 
     def __get_url_from_reids(self):
         """

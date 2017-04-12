@@ -24,9 +24,6 @@ from conf import constant
 from lib import log
 from thriftpy.rpc import make_client
 
-spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
-master_spider = make_client(spider.SpiderService, '127.0.0.1', 8001)
-
 
 class HtmlParser(object):
     """
@@ -73,19 +70,19 @@ class HtmlParser(object):
 
         html_context = self.parse_page(url)
 
-        hyperlinks = []
+        hyperlinks = set()
         if html_context:
             soup_context = BeautifulSoup.BeautifulSoup(html_context)
 
             for each_link in soup_context.findAll('a'):
                 hyperlink = urlparse.urljoin(url, each_link.get('href'))
-                hyperlinks.append(hyperlink)
+                hyperlinks.add(hyperlink)
 
             #for each_link in soup_context.findAll('img'):
             #    hyperlink = urlparse.urljoin(url, each_link.get('src'))
-            #    hyperlinks.append(hyperlink)
+            #    hyperlinks.add(hyperlink)
 
-        return set(hyperlinks), html_context
+        return hyperlinks, html_context
 
 
 class Spider(object):
@@ -96,23 +93,41 @@ class Spider(object):
     def __init__(self):
         self.html_parser = HtmlParser()
 
-    def main(self):
-        # 从master机器获取要抓取的url
+        spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
+        self.master_spider = make_client(spider.SpiderService, '127.0.0.1', 8001)
+
+    def get_url(self):
+        """
+        @brief: 请求master，获取要抓取的url
+        """
+        
+        url = ""
         try:
-            url = master_spider.send_url()
-            log.info("slave当前抓取的url是: {}".format(url))
+            url = self.master_spider.send_url()
+            log.info("slave当前处理的url是: {}".format(url))
         except Exception as e:
             log.error("slave从master获取待抓取url异常, 异常信息: {}".format(traceback.format_exc()))
-            raise RuntimeError("slave从master获取url失败")
+            raise RuntimeError("从master获取url失败")
+
+        return url
+
+    def send_url(self, urls=None):
+        """
+        @brief: 将后续待抓取的url发送给master
+        """
+
+        try:
+            self.master_spider.receive_url(urls)
+        except Exception as e:
+            log.error("发送urls给master异常, 异常信息: {}".format(traceback.format_exc()))
+            raise RuntimeError("slave发送urls到master失败")
+
+    def main(self):
+        url = self.get_url()
+
         urls, content = self.html_parser.get_hyperlinks(url)
 
-        # 将urls发送给master，作为下次抓取的url
-        try:
-            master_spider.receive_url(urls)
-        except Exception as e:
-            log.error("slave发送urls给master异常, 异常信息: {}".format(traceback.format_exc()))
-            raise RuntimeError("slave发送urls到master失败")
-        
+        self.send_url(urls)
 
 
 if __name__ == "__main__":
