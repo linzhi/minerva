@@ -29,6 +29,8 @@ class DispatchSpider(object):
     spider dispatcher
     """
 
+    CLIENT_TIMEOUT = 50000
+
     def __init__(self):
         self.seed_url = constant.SEED_URL
 
@@ -66,57 +68,30 @@ class DispatchSpider(object):
         @return: Bool
         """
 
-        if not urls: return None
+        # 需要return Ture，否则thriftpy会报Missing result
+        if not urls: return True
 
         for url in urls:
             url = url.strip().encode('utf8')
             self.url_queue.put(url)
 
-        log.info("当前待抓取的url个数为: {}".format(self.url_queue.qsize()))
+        log.info("当前待抓取的url总数为: {}".format(self.url_queue.qsize()))
         return True
-
-    def __get_url_from_reids(self):
-        """
-        @brief: 从redis中获取要下发给slave机器的url
-        @return: url: 未被抓取过的url
-        """
-
-        pass
-
-    def __put_url_into_redis(self):
-        """
-        @brief: 把slave机器返回的待抓取的url写到redis
-        """
-
-        pass
-
-    def __set_url_to_bf(self):
-        """
-        @brief: 使用布隆滤波器保存抓取过的url，做去重
-        """
-
-        pass
 
     def main(self):
         """
         @brief: Main
         """
 
-        pass
+        spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
 
-def main():
-    """
-    @brief: 
-    """
-
-    spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
-
-    server = make_server(spider.SpiderService, DispatchSpider(), '127.0.0.1', 8001)
-    server.serve()
+        server = make_server(spider.SpiderService, DispatchSpider(), '127.0.0.1', 8001, client_timeout=self.CLIENT_TIMEOUT)
+        server.serve()
 
 
 if __name__ == "__main__":
-    main()
+    master = DispatchSpider()
+    master.main()
 
 
 
