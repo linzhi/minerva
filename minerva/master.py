@@ -59,6 +59,7 @@ class DispatchSpider(object):
         if url != self.seed_url:
             res = self.redis_db.get(redis_key)
             if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") is not None:
+                log.info("url: {} 已经抓取过，不再返回".format(url))
                 return ""
 
         # 将抓取过的url写到redis
@@ -84,7 +85,6 @@ class DispatchSpider(object):
             url = url.strip().encode('utf8')
             self.url_queue.put(url)
 
-        log.info("当前待抓取的url总数为: {}".format(self.url_queue.qsize()))
         return True
 
     def main(self):

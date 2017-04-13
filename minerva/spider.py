@@ -45,7 +45,10 @@ class Spider(object):
         url = ""
         try:
             url = self.master_spider.send_url()
-            log.info("从master的url_queue获取到的url是: {}".format(url))
+            if url:
+                log.info("从master的url_queue获取到的url是: {}".format(url))
+            else:
+                return url
         except Exception as e:
             log.error("slave从master获取待抓取url异常, 异常信息: {}".format(traceback.format_exc()))
             raise RuntimeError("从master获取url失败")
@@ -106,5 +109,6 @@ class Spider(object):
 
 if __name__ == "__main__":
     spider = Spider()
-    spider.run()
+    while 1:
+        spider.run()
 
