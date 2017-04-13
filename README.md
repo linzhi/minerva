@@ -6,15 +6,11 @@
 + 支持点评店铺详情页的POI数据(名称，地址，电话)抓取,点评的POI数据存放`dianping_poi_info`表，唯一索引为`poi_id`
 
 #### 优点
-+ master负责维护redis消息队列，slave扩容容易，只要新机器安装了python
 + master和slave间方法调用采用Thrift RPC服务框架,效率高
 
 #### 存储
 + 已抓取的url存储在redis,待抓取的存储在master机器的内存中
 + 解析页面后的内容存储在mongo
-
-#### 监控
-待定
 
 #### Usage:
 启动master: 

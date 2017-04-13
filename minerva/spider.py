@@ -39,13 +39,13 @@ class Spider(object):
 
     def get_url(self):
         """
-        @brief: 请求master，获取要抓取的url
+        @brief: 请求master的send_url接口获取下一个要抓取的url
         """
         
         url = ""
         try:
             url = self.master_spider.send_url()
-            log.info("slave当前处理的url是: {}".format(url))
+            log.info("从master的url_queue获取到的url是: {}".format(url))
         except Exception as e:
             log.error("slave从master获取待抓取url异常, 异常信息: {}".format(traceback.format_exc()))
             raise RuntimeError("从master获取url失败")
@@ -89,24 +89,22 @@ class Spider(object):
         else:
             log.error("保存的点评POI信息缺少poi_id字段")
 
-    def main(self):
+    def run(self):
         """
-        @brief: Main
+        @brief: Run Spider
         """
 
         url = self.get_url()
-        url = "http://www.dianping.com/shop/72066632"
 
-        # 点评获取POI信息的接口返回的urls和poi_dict 2个参数,
         if url:
-            urls, content = DianpingParser.get_poi_basic_info(url)
+            urls, result = DianpingParser.get_poi_basic_info(url)
             if urls:
                 self.send_url(urls)
-            if content:
-                self.save_dianping(content)
+            if result:
+                self.save_dianping(result)
 
 
 if __name__ == "__main__":
     spider = Spider()
-    spider.main()
+    spider.run()
 
