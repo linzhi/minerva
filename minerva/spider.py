@@ -82,7 +82,7 @@ class Spider(object):
         if 'poi_id' in data:
             key = {}
             key['poi_id'] = data['poi_id']
-            del data['poi_id']
+
             ret = self.mongo_db.upsert(key, data, constant.SPIDER_MONGO_DIANPING_POI_TABLE)
             if isinstance(ret, dict) and 'errno' in ret and ret['errno'] != 0:
                 log.error("保存的点评POI信息出现异常, poi info: {}".format(data))
@@ -95,6 +95,7 @@ class Spider(object):
         """
 
         url = self.get_url()
+        url = "http://www.dianping.com/shop/72066632"
 
         # 点评获取POI信息的接口返回的urls和poi_dict 2个参数,
         if url:
