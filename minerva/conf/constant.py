@@ -37,7 +37,7 @@ SPIDER_MONGO_ADDRESS = [{"host":"10.99.22.13", "port":8805}]
 SPIDER_MONGO_DATABASE = "spider"
 SPIDER_MONGO_USER = "test"
 SPIDER_MONGO_PASSWD = "test"
-SPIDER_MONGO_SOURCE_POI_TABLE = "source_url"
+SPIDER_MONGO_DIANPING_POI_TABLE = "dianping_poi_info"
 
 
 

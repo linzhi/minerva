@@ -18,6 +18,7 @@ import traceback
 
 from conf import constant
 from lib import log
+from lib import utils
 from thriftpy.rpc import make_client
 from dianping import DianpingParser
 
@@ -32,6 +33,9 @@ class Spider(object):
     def __init__(self):
         spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
         self.master_spider = make_client(spider.SpiderService, '127.0.0.1', 8001, timeout=self.TIMEOUT)
+        
+        self.mongo_db = utils.MongoDBHandler(hosts=constant.SPIDER_MONGO_ADDRESS,
+                                             db=constant.SPIDER_MONGO_DATABASE)
 
     def get_url(self):
         """
@@ -68,12 +72,22 @@ class Spider(object):
             log.error("发送urls给master异常, 异常信息: {}".format(traceback.format_exc()))
             raise RuntimeError("slave发送urls到master失败")
 
-    def save(self):
+    def save_dianping(self, data=None):
         """
-        @brief: 将需要的内容保存到mongo
+        @brief: 将需要的点评的json格式POI数据保存到mongo
         """
 
-        pass
+        if data is None: return None
+
+        if 'poi_id' in data:
+            key = {}
+            key['poi_id'] = data['poi_id']
+            del data['poi_id']
+            ret = self.mongo_db.upsert(key, data, constant.SPIDER_MONGO_DIANPING_POI_TABLE)
+            if isinstance(ret, dict) and 'errno' in ret and ret['errno'] != 0:
+                log.error("保存的点评POI信息出现异常, poi info: {}".format(data))
+        else:
+            log.error("保存的点评POI信息缺少poi_id字段")
 
     def main(self):
         """
@@ -88,7 +102,7 @@ class Spider(object):
             if urls:
                 self.send_url(urls)
             if content:
-                self.save(content)
+                self.save_dianping(content)
 
 
 if __name__ == "__main__":

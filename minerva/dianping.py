@@ -55,7 +55,8 @@ class DianpingParser(HtmlParser):
                 phone = content.find('span', itemprop='tel').text.encode('utf8')
                 log.info('url:{}, 解析的id:{}, name:{}, address:{}, phone:{}'.format(url, poi_id, name, address, phone))
 
-                poi_dict['id'] = poi_id
+                poi_dict['src'] = 'dianping'
+                poi_dict['poi_id'] = poi_id
                 poi_dict['name'] = name
                 poi_dict['address'] = address
                 poi_dict['phone'] = phone
