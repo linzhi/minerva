@@ -82,9 +82,9 @@ class Spider(object):
 
         url = self.get_url()
 
-        # 提取爬取的url的链接和内容，如果有，则保存
+        # 点评获取POI信息的接口返回的urls和poi_dict 2个参数,
         if url:
-            urls, content = DianpingParser.get_poi_info(url)
+            urls, content = DianpingParser.get_poi_basic_info(url)
             if urls:
                 self.send_url(urls)
             if content:

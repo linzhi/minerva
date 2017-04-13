@@ -69,15 +69,16 @@ class HtmlParser(object):
         """
 
         html_context = cls.parse_page(url)
+        soup_context = BeautifulSoup.BeautifulSoup(html_context)
 
         hyperlinks = set()
-        if html_context:
+        if html_context and soup_context:
             soup_context = BeautifulSoup.BeautifulSoup(html_context)
             for each_link in soup_context.findAll('a'):
                 hyperlink = urlparse.urljoin(url, each_link.get('href'))
                 hyperlinks.add(hyperlink)
 
-        return hyperlinks, html_context
+        return hyperlinks, soup_context
 
 
 if __name__ == "__main__":
