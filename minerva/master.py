@@ -37,7 +37,7 @@ class DispatchSpider(object):
                                            port=constant.REDIS_SERVER_PORT)
 
         # 将种子url写到redis队列
-        self.seed_url = constant.SEED_URL
+        self.seed_url = constant.SEED_URL.DIANPING
         res = self.redis_db.rpush(constant.LIST_URL_QUEUE, self.seed_url)
         if isinstance(res, dict) and 'errno' in res and res['errno'] != 0 and 'errmsg' in res:
             errmsg = res['errmsg']
@@ -70,9 +70,9 @@ class DispatchSpider(object):
         # 将抓取过的url写到redis
         res = self.redis_db.set(redis_key, 1)
         if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") is not None:
-            log.info("已经抓取过的url: {} 写入redis成功".format(url))
+            log.info("抓取过的url: {} 写redis成功".format(url))
         else:
-            log.error("已经抓取过的url写入redis异常, 异常信息: {}".format(traceback.format_exc()))
+            log.error("抓取过的url写redis异常, 异常信息: {}".format(traceback.format_exc()))
             raise RuntimeError("写入redis异常")
 
         return url

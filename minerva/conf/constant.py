@@ -11,6 +11,8 @@
 @date:     2017年04月06日
 """
 
+import enum
+
 # 日志配置文件路径
 LOG_CONFIG_PATH = "./conf/log.ini"
 LOG_LOGGER_NAME = "spider"
@@ -22,8 +24,9 @@ THRIFT_FILE = "./conf/spider.thrift"
 TORNADO_SERVER_PORT = 8999
 
 # 种子url
-#SEED_URL = "http://www.zhihu.com/"
-SEED_URL = "http://www.dianping.com/"
+class SEED_URL(enum.Enum):
+    DIANPING = "http://www.dianping.com/"
+    ZHIHU = "http://www.zhihu.com/"
 
 # Redis配置
 REDIS_SERVER_HOST = "10.99.22.13"
