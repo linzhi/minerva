@@ -19,9 +19,8 @@ LOG_LOGGER_NAME = "spider"
 
 # RPC配置
 THRIFT_FILE = "./conf/spider.thrift"
-
-# Tornado服务器配置
-TORNADO_SERVER_PORT = 8999
+RPC_HOST = "172.20.128.217"
+RPC_PORT = 8001
 
 # 种子url
 class SEED_URL(enum.Enum):

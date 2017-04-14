@@ -32,7 +32,8 @@ class Spider(object):
 
     def __init__(self):
         spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
-        self.master_spider = make_client(spider.SpiderService, '127.0.0.1', 8001, timeout=self.TIMEOUT)
+        self.master_spider = make_client(spider.SpiderService, constant.RPC_HOST, 
+                                         constant.RPC_PORT, timeout=self.TIMEOUT)
         
         self.mongo_db = utils.MongoDBHandler(hosts=constant.SPIDER_MONGO_ADDRESS,
                                              db=constant.SPIDER_MONGO_DATABASE)

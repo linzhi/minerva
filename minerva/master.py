@@ -101,7 +101,8 @@ class DispatchSpider(object):
         """
 
         spider = thriftpy.load(constant.THRIFT_FILE, module_name="spider_thrift")
-        server = make_server(spider.SpiderService, DispatchSpider(), '127.0.0.1', 8001, client_timeout=self.CLIENT_TIMEOUT)
+        server = make_server(spider.SpiderService, DispatchSpider(), constant.RPC_HOST, 
+                             constant.RPC_PORT, client_timeout=self.CLIENT_TIMEOUT)
         server.serve()
 
 
