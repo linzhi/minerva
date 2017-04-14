@@ -88,7 +88,7 @@ class Spider(object):
 
             ret = self.mongo_db.upsert(key, data, constant.SPIDER_MONGO_DIANPING_POI_TABLE)
             if isinstance(ret, dict) and 'errno' in ret and ret['errno'] != 0:
-                log.error("保存的点评POI信息出现异常, poi info: {}".format(data))
+                log.error("保存点评POI信息出现异常, poi info: {}".format(data))
         else:
             log.error("保存的点评POI信息缺少poi_id字段")
 

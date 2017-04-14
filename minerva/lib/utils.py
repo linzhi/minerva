@@ -350,8 +350,8 @@ class RedisHandler(object):
     def rpush(self, key, value):
         """
         @brief: rpush
-        @param key[in]: str Redis的键
-        @param value[in]: object Redis的值
+        @param key[in]: 队列名称
+        @param value[in]: push到队列的value
         @return: dict {"errno":0, "data":True/False, "errmsg":""}
         """
         if not isinstance(key, basestring):
@@ -359,6 +359,23 @@ class RedisHandler(object):
         for i in xrange(self.retry_times):
             try:
                 data = self.conn.rpush(key, value)
+                break
+            except Exception as ex:
+                if i == (self.retry_times - 1):
+                    return {"errno":1, "data":False, "errmsg":"%s" % (ex)}
+        return {"errno":0, "data":data, "errmsg":""}
+
+    def lpop(self, key):
+        """
+        @brief: lpop
+        @param key[in]: 队列名称,从队列头部取数据
+        @return: dict {"errno":0, "data":True/False, "errmsg":""}
+        """
+        if not isinstance(key, basestring):
+            return {"errno":1, "data":False, "errmsg":"key error"}
+        for i in xrange(self.retry_times):
+            try:
+                data = self.conn.lpop(key)
                 break
             except Exception as ex:
                 if i == (self.retry_times - 1):

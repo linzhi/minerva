@@ -11,13 +11,8 @@ Created on 2017-04-09
 Author: qilinzhi@gmail.com
 """
 
-import os
 import BeautifulSoup
-import chardet
 import traceback
-import urllib
-import urllib2
-import urlparse
 
 from conf import constant
 from lib import log

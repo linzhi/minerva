@@ -11,7 +11,6 @@ Created on 2017-04-09
 Author: qilinzhi@gmail.com
 """
 
-import os
 import BeautifulSoup
 import chardet
 import traceback
