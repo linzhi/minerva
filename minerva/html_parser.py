@@ -38,15 +38,14 @@ class HtmlParser(object):
         @brief: get html content
         """
 
+        html_page = None
         req = urllib2.Request(url=url)
         req.add_header('User-agent', 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.1)')
-        html_page = None
 
         try:
             response = urllib2.urlopen(req, timeout=cls.TIMEOUT)
         except Exception as e:
-            log.error("parse html fail, url: {}, e: {}".format(url, traceback.format_exc()))
-            return None
+            log.error("解析网页异常, url: {}, e: {}".format(url, traceback.format_exc()))
         else:
             html_page = response.read()
             response.close()
@@ -55,27 +54,28 @@ class HtmlParser(object):
                 if encoding and encoding != 'utf-8':
                     html_page = html_page.decode(encoding).encode('utf-8')
             except UnicodeDecodeError as e:
-                log.error("decode error, e: {}".format(traceback.format_exc()))
-                return None
+                log.error("网页解码异常, e: {}".format(traceback.format_exc()))
         
         return html_page
 
     @classmethod
     def get_content(cls, url):
         """
-        @brief: 解析url，获取超链接和url内容
-        @return: 返回超链接和url的内容
+        @brief: 解析url，获取页面链接和页面内容
         """
 
-        html_context = cls.parse_page(url)
-        soup_context = BeautifulSoup.BeautifulSoup(html_context)
-
         hyperlinks = set()
-        if html_context and soup_context:
+        soup_context = None
+
+        # 解析网页获取网页链接和网页内容
+        html_context = cls.parse_page(url)
+        if html_context:
             soup_context = BeautifulSoup.BeautifulSoup(html_context)
-            for each_link in soup_context.findAll('a'):
-                hyperlink = urlparse.urljoin(url, each_link.get('href'))
-                hyperlinks.add(hyperlink)
+            if soup_context:
+                soup_context = BeautifulSoup.BeautifulSoup(html_context)
+                for each_link in soup_context.findAll('a'):
+                    hyperlink = urlparse.urljoin(url, each_link.get('href'))
+                    hyperlinks.add(hyperlink)
 
         return hyperlinks, soup_context
 

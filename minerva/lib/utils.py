@@ -248,6 +248,7 @@ class RedisHandler(object):
         @param expireSeconds[in]: Redis set的过期时间
         @return: dict {"errno":0, "data":True/False, "errmsg":""}
         """
+
         if not isinstance(key, basestring):
             return {"errno":1, "data":False, "errmsg":"key error"}
         for i in xrange(self.retry_times):
@@ -267,6 +268,7 @@ class RedisHandler(object):
         @param key[in]: str Redis的键
         @return: dict {"errno":0, "data":True/False, "errmsg":""}
         """
+
         if not isinstance(key, basestring):
             return {"errno":1, "data":False, "errmsg":"key error"}
         for i in xrange(self.retry_times):
@@ -283,6 +285,7 @@ class RedisHandler(object):
         @param key[in]: str Redis的键
         @return: dict {"errno":0, "data":data/False, "errmsg":""}
         """
+
         if not isinstance(key, basestring):
             return {"errno":1, "data":False, "errmsg":"key error"}
         for i in xrange(self.retry_times):
@@ -301,6 +304,7 @@ class RedisHandler(object):
         @param value[in]: object Redis的值
         @return: dict {"errno":0, "data":True/False, "errmsg":""}
         """
+
         if not isinstance(key, basestring):
             return {"errno":1, "data":False, "errmsg":"key error"}
         for i in xrange(self.retry_times):
@@ -318,6 +322,7 @@ class RedisHandler(object):
         @param key[in]: str Redis的键
         @return: dict {"errno":0, "data":data/False, "errmsg":""}
         """
+
         if not isinstance(key, basestring):
             return {"errno":1, "data":False, "errmsg":"key error"}
         for i in xrange(self.retry_times):
@@ -336,6 +341,7 @@ class RedisHandler(object):
         @param value[in]: object Redis的值
         @return: dict {"errno":0, "data":True/False, "errmsg":""}
         """
+
         if not isinstance(key, basestring):
             return {"errno":1, "data":False, "errmsg":"key error"}
         for i in xrange(self.retry_times):
@@ -352,8 +358,9 @@ class RedisHandler(object):
         @brief: rpush
         @param key[in]: 队列名称
         @param value[in]: push到队列的value
-        @return: dict {"errno":0, "data":True/False, "errmsg":""}
+        @return: dict {"errno":0, "data":True/False, "errmsg":""}, data为列表长度
         """
+
         if not isinstance(key, basestring):
             return {"errno":1, "data":False, "errmsg":"key error"}
         for i in xrange(self.retry_times):
@@ -369,8 +376,9 @@ class RedisHandler(object):
         """
         @brief: lpop
         @param key[in]: 队列名称,从队列头部取数据
-        @return: dict {"errno":0, "data":True/False, "errmsg":""}
+        @return: dict {"errno":0, "data":True/False, "errmsg":""}, data为从列表取出来的元素
         """
+
         if not isinstance(key, basestring):
             return {"errno":1, "data":False, "errmsg":"key error"}
         for i in xrange(self.retry_times):
@@ -423,6 +431,7 @@ class RedisHandler(object):
         @param type[in]: class Redis的值的类型("str/set/list")
         @return: dict {"errno":0, "data":True/False, "errmsg":""}
         """
+
         if not isinstance(key, basestring) or (type != "str" and type != "set" and type != "list"):
             return {"errno": 1, "data": False, "errmsg": "parameter error"}
         if not isinstance(value, basestring) and not isinstance(value, int) \
@@ -445,6 +454,7 @@ class RedisHandler(object):
         @param value[in]: object Redis的增加的值("str/set/list")
         @return: dict {"errno":0, "data":True/False, "errmsg":""}
         """
+
         if not isinstance(key, basestring) or (type != "str" and type != "set" and type != "list"):
             return {"errno": 1, "data": False, "errmsg": "parameter error"}
         if not isinstance(value, basestring) and not isinstance(value, int) \

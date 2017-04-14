@@ -32,14 +32,16 @@ class DispatchSpider(object):
     CLIENT_TIMEOUT = 50000
 
     def __init__(self):
-        self.seed_url = constant.SEED_URL
 
         self.redis_db = utils.RedisHandler(host=constant.REDIS_SERVER_HOST,
                                            port=constant.REDIS_SERVER_PORT)
 
-        # 将种子url写到队列
-        self.url_queue = Queue.Queue()
-        self.url_queue.put(self.seed_url)
+        # 将种子url写到redis队列
+        self.seed_url = constant.SEED_URL
+        res = self.redis_db.rpush(constant.LIST_URL_QUEUE, self.seed_url)
+        if isinstance(res, dict) and 'errno' in res and res['errno'] != 0 and 'errmsg' in res:
+            errmsg = res['errmsg']
+            log.error("初始化种子url :{} 失败, error msg: {}".format(self.seed_url, errmsg))
 
     def send_url(self):
         """
@@ -47,15 +49,18 @@ class DispatchSpider(object):
         @return: 如果获取的url已经抓取过，那么返回 "", 否则返回url
         """
 
-        # 从url_queue中获取要抓取的url
-        if self.url_queue.empty():
-            log.error("待抓取的url队列为空")
-            return ""
-        else:
-            url = self.url_queue.get(True, 1)
-            redis_key = constant.KEY_URL.format(url)
+        # 从redis队列中获取要抓取的url
+        res = self.redis_db.lpop(constant.LIST_URL_QUEUE) 
+        if isinstance(res, dict) and 'errno' in res and res['errno'] == 0 and \
+            'data' in res and res['data'] is not None:
+            url = res['data']
+        elif 'errmsg' in res:
+            errmsg = res['errmsg']
+            log.error("从redis队列中获取待取的url失败, errmsg: {}".format(errmsg))
+            raise RuntimeError("从redis队列中获取待抓取的url失败")
 
         # 判断非种子url是否已经抓取过
+        redis_key = constant.KEY_URL.format(url)
         if url != self.seed_url:
             res = self.redis_db.get(redis_key)
             if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") is not None:
@@ -83,7 +88,10 @@ class DispatchSpider(object):
 
         for url in urls:
             url = url.strip().encode('utf8')
-            self.url_queue.put(url)
+            res = self.redis_db.rpush(constant.LIST_URL_QUEUE, url)
+            if isinstance(res, dict) and 'errno' in res and res['errno'] != 0 and 'errmsg' in res:
+                errmsg = res['errmsg']
+                log.error("写url :{} 到redis队列失败, error msg: {}".format(url, errmsg))
 
         return True
 

@@ -7,9 +7,10 @@
 
 #### 优点
 + master和slave间方法调用采用Thrift RPC服务框架,效率高
++ 抓取后的数据由mongo存储，易扩展
 
 #### 存储
-+ 已抓取的url存储在redis,待抓取的存储在master机器的内存中
++ 已抓取的url存储在redis，待抓取的存储在redis维护的FIFO队列中
 + 解析页面后的内容存储在mongo
 
 #### Usage:
@@ -21,7 +22,7 @@
 
     python spider.py
 
-#### 相关的依赖:
+#### 相关的依赖库:
 + pymongo (3.4.0)
 + redis (2.10.5)
 + thriftpy (0.3.9)

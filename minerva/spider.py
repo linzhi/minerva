@@ -46,7 +46,7 @@ class Spider(object):
         try:
             url = self.master_spider.send_url()
             if url:
-                log.info("从master的url_queue获取到的url是: {}".format(url))
+                log.info("从master获取到的url是: {}".format(url))
             else:
                 return url
         except Exception as e:
