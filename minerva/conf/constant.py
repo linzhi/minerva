@@ -11,7 +11,6 @@
 @date:     2017年04月06日
 """
 
-import enum
 
 # 日志配置文件路径
 LOG_CONFIG_PATH = "./conf/log.ini"
@@ -19,11 +18,11 @@ LOG_LOGGER_NAME = "spider"
 
 # RPC配置
 THRIFT_FILE = "./conf/spider.thrift"
-RPC_HOST = "10.99.22.13"
+RPC_HOST = "127.0.0.1"
 RPC_PORT = 8001
 
 # 种子url
-class SEED_URL(enum.Enum):
+class SEED_URL():
     DIANPING = "http://www.dianping.com/"
     ZHIHU = "http://www.zhihu.com/"
 
