@@ -7,6 +7,7 @@ Minerva旨在提供**简单可依赖的分布式数据定向抓取工具**,目�
 + master和slave间方法调用采用Thrift RPC服务框架,效率高
 + 抓取结果由mongo存储,字段易存储、易扩展
 + url队列由redis维护，不依赖本地缓存，可持久化
++ spider可在多台机器单进程运行，充分利用机器资源
 
 #### 存储设计
 + 已抓取的url存储在redis,待抓取的存储在redis维护的FIFO队列中
