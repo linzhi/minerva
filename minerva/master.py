@@ -14,7 +14,6 @@ Author: qilinzhi@gmail.com
 import os
 import sys
 import Queue
-import traceback
 import thriftpy
 
 
@@ -60,20 +59,24 @@ class DispatchSpider(object):
             raise RuntimeError("从redis队列中获取待抓取的url失败")
 
         # 判断非种子url是否已经抓取过
-        redis_key = constant.KEY_URL.format(url)
+        key = constant.CRAWLED_URL_SET
+        value = url + ":1"
         if url != self.seed_url:
-            res = self.redis_db.get(redis_key)
-            if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") is not None:
+            res = self.redis_db.sismember(key, value)
+            if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") > 0:
                 log.info("url: {} 已经抓取过，不再返回".format(url))
                 return ""
 
         # 将抓取过的url写到redis
-        res = self.redis_db.set(redis_key, 1)
-        if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") is not None:
+        key = constant.CRAWLED_URL_SET
+        value = url + ":1"
+        res = self.redis_db.sadd(key, value)
+        if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") > 0:
             log.info("抓取过的url: {} 写redis成功".format(url))
-        else:
-            log.error("抓取过的url写redis异常, 异常信息: {}".format(traceback.format_exc()))
-            raise RuntimeError("写入redis异常")
+        elif isinstance(res, dict) and res.get("errmsg") is not None:
+            errmsg = res.get('errmsg')
+            log.error("抓取过的url: {} 写redis异常, errmsg: {}".format(url, errmsg))
+            raise RuntimeError("抓取过的url写入redis异常")
 
         return url
 
@@ -89,8 +92,8 @@ class DispatchSpider(object):
         for url in urls:
             url = url.strip().encode('utf8')
             res = self.redis_db.rpush(constant.LIST_URL_QUEUE, url)
-            if isinstance(res, dict) and 'errno' in res and res['errno'] != 0 and 'errmsg' in res:
-                errmsg = res['errmsg']
+            if isinstance(res, dict) and 'errno' in res and res.get('errno') != 0 and 'errmsg' in res:
+                errmsg = res.get('errmsg')
                 log.error("写url :{} 到redis队列失败, error msg: {}".format(url, errmsg))
 
         return True

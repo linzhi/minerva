@@ -315,6 +315,32 @@ class RedisHandler(object):
                 if i == (self.retry_times - 1):
                     return {"errno":1, "data":False, "errmsg":"%s" % (ex)}
         return {"errno":0, "data":data, "errmsg":""}
+
+    def sismember(self, key, value):
+        """
+        @brief: smember，判断value在key中是否存在
+        @param key[in]: str Redis的键
+        @return: dict {"errno":0, "data":data/False, "errmsg":""}
+        """
+
+        if not isinstance(key, basestring):
+            return {"errno":1, "data":False, "errmsg":"key error"}
+        for i in xrange(self.retry_times):
+            try:
+                data = self.conn.sismember(key, value)
+                break
+            except Exception as ex:
+                if i == (self.retry_times - 1):
+                    return {"errno":1, "data":False, "errmsg":"%s" % (ex)}
+        return {"errno":0, "data":data, "errmsg":""}
+
+    def srem(self, key, value):
+        """
+        @brief: srem
+        @param key[in]: str Redis的键
+        @param value[in]: object Redis的值
+        @return: dict {"errno":0, "data":True/False, "errmsg":""}
+        """
         
     def smembers(self, key):
         """
