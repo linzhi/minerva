@@ -13,12 +13,12 @@ import redis
 
 class MongoDBHandler(object):
     """
-        @brief: 处理MongoDB操作
-        @param hosts[in]: list 主机列表 [{"host":"127.0.0.1", "port":27017}]
-        @param db[in]: str 数据库名
-        @param repl[in]: str 集群名
-        @param user[in]: str 用户名
-        @param passwd[in]: str 密码
+    @brief: 处理MongoDB操作
+    @param hosts[in]: list 主机列表 [{"host":"127.0.0.1", "port":27017}]
+    @param db[in]: str 数据库名
+    @param repl[in]: str 集群名
+    @param user[in]: str 用户名
+    @param passwd[in]: str 密码
     """
     connPool = {}
     DEFAULT_RETRY_TIMES = 3
