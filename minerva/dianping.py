@@ -57,6 +57,7 @@ class DianpingParser(HtmlParser):
                 log.info('点评url:{}, 解析结果 id:{}, name:{}, address:{}, phone:{}'.format(url, poi_id, name, address, phone))
 
                 result['src'] = 'dianping'
+                result['url'] = url
                 result['poi_id'] = poi_id
                 result['name'] = name
                 result['address'] = address

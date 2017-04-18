@@ -52,7 +52,6 @@ class Spider(object):
                 return url
         except Exception as e:
             log.error("slave从master获取待抓取url异常, 异常信息: {}".format(traceback.format_exc()))
-            raise RuntimeError("从master获取url失败")
 
         return url
 
@@ -98,18 +97,21 @@ class Spider(object):
         @brief: Run Spider
         """
 
-        url = self.get_url()
-
-        if url:
-            urls, result = DianpingParser.get_poi_basic_info(url)
-            if urls:
-                self.send_url(urls)
-            if result:
-                self.save_dianping(result)
+        while 1:
+            url = self.get_url()
+            try:
+                if url:
+                    urls, result = DianpingParser.get_poi_basic_info(url)
+                    if urls:
+                        self.send_url(urls)
+                    if result:
+                        self.save_dianping(result)
+            except Exception as e:
+                log.error("抓取url: {} 异常: {}".format(url, traceback.format_exc()))
+                continue
 
 
 if __name__ == "__main__":
     spider = Spider()
-    while 1:
-        spider.run()
+    spider.run()
 
