@@ -12,6 +12,7 @@ Author: qilinzhi@gmail.com
 """
 
 import BeautifulSoup
+import json
 import traceback
 
 from conf import constant
@@ -51,23 +52,38 @@ class DianpingParser(HtmlParser):
             if content:
                 log.info("当前抓取的点评的店铺url是: {}".format(url))
 
+                # 解析名称，地址，电话
                 name = content.find('h1', "shop-name").contents[0].strip().encode('utf8')
                 address = content.find('span', itemprop='street-address').text.encode('utf8')
                 phone = content.find('span', itemprop='tel').text.encode('utf8')
-                log.info('点评url:{}, 解析结果 id:{}, name:{}, address:{}, phone:{}'.format(url, poi_id, name, address, phone))
-
+                result['poi_id'] = poi_id
+                result['address'] = address
+                result['name'] = name
+                result['phone'] = phone
                 result['src'] = 'dianping'
                 result['url'] = url
-                result['poi_id'] = poi_id
-                result['name'] = name
-                result['address'] = address
-                result['phone'] = phone
 
-                return urls, result
+                # 解析经纬度
+                scripts = content.findAll('script')
+                for script in scripts:
+                    script = script.text.encode("utf8")
+                    if "shop_config" in script:
+                        for i in script.split(","):
+                            if 'shopGlat' in i:
+                                latitude = i.split(':')[-1].replace('"', '')
+                                result['latitude'] = float(latitude)
+                            if 'shopGlng' in i:
+                                longitude = i.split(':')[-1].replace('"', '')
+                                result['longitude'] = float(longitude)
+                            if 'cityName' in i:
+                                city = i.split(':')[-1]
+                                result['city'] = city.replace('"', '')
+                        break
         except Exception as e:
             log.error('解析url: {} 异常，异常信息: {}'.format(url, traceback.format_exc()))
-
-        return urls, result
+        finally:
+            log.info('点评url:{}, 解析结果: {}'.format(url, result))
+            return urls, result
 
 
 if __name__ == "__main__":
