@@ -73,7 +73,6 @@ class Spider(object):
                 self.master_spider.receive_url(tmp_urls)
         except Exception as e:
             log.error("发送urls给master异常, 异常信息: {}".format(traceback.format_exc()))
-            raise RuntimeError("slave发送urls到master失败")
 
     def save_dianping(self, data=None):
         """
