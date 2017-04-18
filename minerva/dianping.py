@@ -37,6 +37,7 @@ class DianpingParser(HtmlParser):
         """
 
         # 保存从content中提取的结果
+        urls = None
         result = {}
 
         urls, content = HtmlParser.get_content(url)

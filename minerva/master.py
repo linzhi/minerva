@@ -72,10 +72,10 @@ class DispatchSpider(object):
         value = url + ":1"
         res = self.redis_db.sadd(key, value)
         if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") > 0:
-            log.info("抓取过的url: {} 写redis成功".format(url))
+            log.info("已经抓取的url: {} 写入redis".format(url))
         elif isinstance(res, dict) and res.get("errmsg") is not None:
             errmsg = res.get('errmsg')
-            log.error("抓取过的url: {} 写redis异常, errmsg: {}".format(url, errmsg))
+            log.error("已经抓取的url: {} 写入redis异常, errmsg: {}".format(url, errmsg))
             raise RuntimeError("抓取过的url写入redis异常")
 
         return url
