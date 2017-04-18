@@ -15,6 +15,7 @@ import os
 import sys
 import Queue
 import thriftpy
+import hashlib
 
 
 from conf import constant
@@ -58,18 +59,16 @@ class DispatchSpider(object):
             log.error("从redis队列中获取待取的url失败, errmsg: {}".format(errmsg))
             raise RuntimeError("从redis队列中获取待抓取的url失败")
 
-        # 判断非种子url是否已经抓取过
+        # 判断非种子url是否已经抓取过，如果抓取过返回空，没有则写入redis的去重队列
         key = constant.CRAWLED_URL_SET
-        value = url + ":1"
+        value = hashlib.md5(url).hexdigest()
+
         if url != self.seed_url:
             res = self.redis_db.sismember(key, value)
             if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") > 0:
                 log.info("url: {} 已经抓取过，不再返回".format(url))
                 return ""
 
-        # 将抓取过的url写到redis
-        key = constant.CRAWLED_URL_SET
-        value = url + ":1"
         res = self.redis_db.sadd(key, value)
         if isinstance(res, dict) and res.get("errno") == 0 and res.get("data") > 0:
             log.info("已经抓取的url: {} 写入redis".format(url))

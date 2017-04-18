@@ -14,8 +14,7 @@ Minerva旨在提供**简单可依赖的分布式数据定向抓取工具**,目�
 配置文件为conf/constant.py, 可以修改服务的`ip/port`, 修改redis和mongo的地址
 
 #### TODO:
-+ url存储改为存储hash
-+ 挖去知乎高赞评论
++ 知乎高赞评论
 
 #### 相关的依赖库:
 + pymongo (3.4.0)
