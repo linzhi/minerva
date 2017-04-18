@@ -51,7 +51,7 @@ class DianpingParser(HtmlParser):
             if content:
                 log.info("当前抓取的点评的店铺url是: {}".format(url))
 
-                name = content.find('div', id='basic-info').h1.contents[0].strip().encode('utf8')
+                name = content.find('h1', "shop-name").contents[0].strip().encode('utf8')
                 address = content.find('span', itemprop='street-address').text.encode('utf8')
                 phone = content.find('span', itemprop='tel').text.encode('utf8')
                 log.info('点评url:{}, 解析结果 id:{}, name:{}, address:{}, phone:{}'.format(url, poi_id, name, address, phone))
@@ -65,7 +65,7 @@ class DianpingParser(HtmlParser):
 
                 return urls, result
         except Exception as e:
-            log.error('解析url: {}异常，异常信息: {}'.format(url, traceback.format_exc()))
+            log.error('解析url: {} 异常，异常信息: {}'.format(url, traceback.format_exc()))
 
         return urls, result
 

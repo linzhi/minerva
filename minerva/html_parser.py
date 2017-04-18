@@ -74,7 +74,7 @@ class HtmlParser(object):
             if soup_context:
                 soup_context = BeautifulSoup.BeautifulSoup(html_context)
                 for each_link in soup_context.findAll('a'):
-                    hyperlink = urlparse.urljoin(url, each_link.get('href'))
+                    hyperlink = urlparse.urljoin(url, (each_link or {}).get('href'))
                     hyperlinks.add(hyperlink)
 
         return hyperlinks, soup_context

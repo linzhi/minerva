@@ -12,6 +12,7 @@ Author: qilinzhi@gmail.com
 """
 
 import os
+import hashlib
 import time
 import thriftpy
 import traceback
