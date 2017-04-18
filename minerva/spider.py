@@ -97,9 +97,11 @@ class Spider(object):
         """
 
         while 1:
+            # 获取要抓取的url
             url = self.get_url()
             try:
                 if url:
+                    # 获取要抓取的url的超链接和内容
                     urls, result = DianpingParser.get_poi_basic_info(url)
                     if urls:
                         self.send_url(urls)
