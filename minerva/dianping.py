@@ -76,8 +76,8 @@ class DianpingParser(HtmlParser):
                                 longitude = i.split(':')[-1].replace('"', '')
                                 result['longitude'] = float(longitude)
                             if 'cityName' in i:
-                                city = i.split(':')[-1]
-                                result['city'] = city.replace('"', '')
+                                city = i.split(':')[-1].replace('"', '')
+                                result['city'] = city
                         break
         except Exception as e:
             log.error('解析url: {} 异常，异常信息: {}'.format(url, traceback.format_exc()))
