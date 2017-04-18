@@ -334,14 +334,6 @@ class RedisHandler(object):
                     return {"errno":1, "data":False, "errmsg":"%s" % (ex)}
         return {"errno":0, "data":data, "errmsg":""}
 
-    def srem(self, key, value):
-        """
-        @brief: srem
-        @param key[in]: str Redis的键
-        @param value[in]: object Redis的值
-        @return: dict {"errno":0, "data":True/False, "errmsg":""}
-        """
-        
     def smembers(self, key):
         """
         @brief: smembers
