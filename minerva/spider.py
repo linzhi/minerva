@@ -22,6 +22,7 @@ from lib import log
 from lib import utils
 from thriftpy.rpc import make_client
 from dianping import DianpingParser
+from zhihu import ZhihuParser
 
 
 class Spider(object):
