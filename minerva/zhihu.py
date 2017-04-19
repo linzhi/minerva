@@ -12,7 +12,9 @@ Author: qilinzhi@gmail.com
 """
 
 import BeautifulSoup
+import cookielib
 import json
+import requests
 import traceback
 
 from conf import constant
@@ -24,6 +26,10 @@ class ZhihuParser(HtmlParser):
     """
     @brief: 解析知乎的页面，获取高赞评论
     """
+
+    INDEX_URL = 'http://www.zhihu.com'
+    LOGIN_URL = 'http://www.zhihu.com/login/email'
+    CAPTCHA_URL = 'http://www.zhihu.com/captcha.gif'
 
     TIMEOUT = 20
 
@@ -61,7 +67,8 @@ class ZhihuParser(HtmlParser):
 
 
 if __name__ == "__main__":
-    pass
+    zhihu = ZhihuParser()
+    zhihu.get_info()
 
 
 
