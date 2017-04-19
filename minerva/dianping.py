@@ -80,7 +80,7 @@ class DianpingParser(HtmlParser):
                                 result['city'] = city
                         break
         except Exception as e:
-            log.error('解析url: {} 异常，异常信息: {}'.format(url, traceback.format_exc()))
+            log.error('解析点评url: {} 异常，异常信息: {}'.format(url, traceback.format_exc()))
         finally:
             log.info('点评url:{}, 解析结果: {}'.format(url, result))
             return urls, result
