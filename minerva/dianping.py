@@ -45,7 +45,7 @@ class DianpingParser(HtmlParser):
 
         # 如果不是点评的店铺详情页的url，则退出
         poi_id = url.strip().split('/')[-1]
-        if not poi_id.isdigit():
+        if not poi_id.isdigit() or 'shop/' not in url:
             return urls, result
 
         try:
