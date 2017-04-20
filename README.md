@@ -13,7 +13,10 @@ Minerva旨在提供**简单可依赖的分布式数据定向抓取工具**,目�
 + master和slave间方法调用采用Thrift RPC服务框架,效率高
 
 #### Usage:
-启动master: `python master.py`, 启动spider: `python spider.py`. 配置文件为conf/constant.py, 可以修改服务的`ip/port`, 修改redis和mongo的地址
+启动master: `python master.py`, 启动spider: `python spider.py`
+
+#### Tips:
+抓取知乎的信息需要输入账户,密码和验证码,如果cookie有效，则不用输入验证码
 
 #### TODO:
 + 提升系统稳定性
