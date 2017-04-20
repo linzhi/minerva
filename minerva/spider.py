@@ -40,26 +40,28 @@ class Spider(object):
         self.mongo_db = utils.MongoDBHandler(hosts=constant.SPIDER_MONGO_ADDRESS,
                                              db=constant.SPIDER_MONGO_DATABASE)
 
-    def get_url(self):
+    def get_url(self, url_type='dianping'):
         """
         @brief: 请求master的send_url接口获取下一个要抓取的url
+        @param: ulr_type 代表获取dianping的还是zhihu的url,默认值是dianping
         """
         
         url = ""
         try:
-            url = self.master_spider.send_url()
+            url = self.master_spider.send_url(url_type=url_type)
             if url:
-                log.info("从master获取到的url是: {}".format(url))
+                log.info("从master获取到{}的url是: {}".format(url_type, url))
             else:
                 return url
         except Exception as e:
-            log.error("slave从master获取待抓取url异常, 异常信息: {}".format(traceback.format_exc()))
+            log.error("从master获取{}待抓取的url异常, 异常信息: {}".format(url_type, traceback.format_exc()))
 
         return url
 
-    def send_url(self, urls=None):
+    def send_url(self, urls=None, url_type='dianping'):
         """
         @brief: 将后续待抓取的url发送给master
+        @param: ulr_type 代表获取dianping的还是zhihu的url,默认值是dianping
         """
 
         try:
@@ -69,10 +71,10 @@ class Spider(object):
                 count += 1
                 tmp_urls.add(url)
                 if count % 200 == 0:
-                    self.master_spider.receive_url(tmp_urls)
+                    self.master_spider.receive_url(urls=tmp_urls, url_type=url_type)
                     tmp_urls.clear()
             if tmp_urls:
-                self.master_spider.receive_url(tmp_urls)
+                self.master_spider.receive_url(urls=tmp_urls, url_type=url_type)
         except Exception as e:
             log.error("发送urls给master异常, 异常信息: {}".format(traceback.format_exc()))
 
@@ -99,19 +101,22 @@ class Spider(object):
         """
 
         while 1:
-            # 获取要抓取的url
-            url = self.get_url()
+            # 抓取点评的信息
+            url_type = 'dianping'
+            url = self.get_url(url_type=url_type)
             try:
                 if url:
                     # 获取要抓取的url的超链接和内容
                     urls, result = DianpingParser.get_poi_basic_info(url)
                     if urls:
-                        self.send_url(urls)
+                        self.send_url(urls, url_type=url_type)
                     if result:
                         self.save_dianping(result)
             except Exception as e:
-                log.error("抓取url: {} 异常: {}".format(url, traceback.format_exc()))
+                log.error("抓取{}的url: {} 异常: {}".format(url_type, url, traceback.format_exc()))
                 continue
+
+            # 抓取知乎的信息
 
 
 if __name__ == "__main__":

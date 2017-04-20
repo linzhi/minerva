@@ -22,19 +22,27 @@ RPC_HOST = "127.0.0.1"
 RPC_PORT = 8001
 
 # 种子url
-class SEED_URL():
-    DIANPING = "www.dianping.com"
-    ZHIHU = "https://www.zhihu.com/"
-    BAIDU = "http://www.baidu.com/"
+SEED_URL = {
+    "dianping": "http://www.dianping.com",
+    "zhihu": "https://www.zhihu.com/",
+    "baidu": "http://www.baidu.com/"
+}
+
+# url类型
+class URL_TYPE():
+    DIANPING = "dianping"
+    ZHIHU = "zhihu"
 
 # Redis配置
 REDIS_SERVER_HOST = "10.99.22.13"
 REDIS_SERVER_PORT = 8107
 
 # Redis定义key
-KEY_URL = "crawled::url::{0}"
-LIST_URL_QUEUE = "url::queue"
-CRAWLED_URL_SET = "crawled::url::set"
+DIANPING_LIST_URL_QUEUE = "dianping::url::queue"
+DIANPING_CRAWLED_URL_SET = "dianping::crawled::url::set"
+
+ZHIHU_LIST_URL_QUEUE = "zhihu::url::queue"
+ZHIHU_CRAWLED_URL_SET = "zhihu::crawled::url::set"
 
 #Mongo配置
 SPIDER_MONGO_ADDRESS = [{"host":"10.99.22.13", "port":8805}]
@@ -42,6 +50,7 @@ SPIDER_MONGO_DATABASE = "spider"
 SPIDER_MONGO_USER = "test"
 SPIDER_MONGO_PASSWD = "test"
 SPIDER_MONGO_DIANPING_POI_TABLE = "dianping_poi_info"
+SPIDER_MONGO_ZHIHU_POI_TABLE = "zhihu_info"
 
 
 

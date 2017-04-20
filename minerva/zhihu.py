@@ -28,7 +28,7 @@ class ZhihuParser(HtmlParser):
     @brief: 解析知乎的页面，获取高赞评论
     """
 
-    INDEX_URL = constant.SEED_URL.ZHIHU
+    INDEX_URL = constant.SEED_URL['zhihu']
     LOGIN_URL = 'https://www.zhihu.com/login/email'
     CAPTCHA_URL = 'https://www.zhihu.com/captcha.gif?r='
     PROFILE_URL = "https://www.zhihu.com/settings/profile"
@@ -126,8 +126,6 @@ class ZhihuParser(HtmlParser):
         result = {}
 
         urls, content = HtmlParser.get_content(url=url, session=self.session)
-
-        print content
         try:
             if content:
                 log.info("当前抓取的知乎url是: {}".format(url))
