@@ -23,8 +23,9 @@ RPC_PORT = 8001
 
 # 种子url
 class SEED_URL():
-    DIANPING = "http://www.dianping.com/"
-    ZHIHU = "http://www.zhihu.com/"
+    DIANPING = "www.dianping.com"
+    ZHIHU = "https://www.zhihu.com/"
+    BAIDU = "http://www.baidu.com/"
 
 # Redis配置
 REDIS_SERVER_HOST = "10.99.22.13"

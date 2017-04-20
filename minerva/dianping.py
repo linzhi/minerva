@@ -50,7 +50,7 @@ class DianpingParser(HtmlParser):
 
         try:
             if content:
-                log.info("当前抓取的点评的店铺url是: {}".format(url))
+                log.info('当前抓取的点评的店铺url是: {}'.format(url))
 
                 # 解析名称，地址，电话
                 name = content.find('h1', "shop-name").contents[0].strip().encode('utf8')

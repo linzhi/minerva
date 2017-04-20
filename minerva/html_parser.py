@@ -40,7 +40,7 @@ class HtmlParser(object):
 
         html_page = None
         req = urllib2.Request(url=url)
-        req.add_header('User-agent', 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.1)')
+        req.add_header('User-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36')
 
         try:
             response = urllib2.urlopen(req, timeout=cls.TIMEOUT)
