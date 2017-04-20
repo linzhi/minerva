@@ -54,7 +54,7 @@ class Spider(object):
             else:
                 return url
         except Exception as e:
-            log.error("从master获取{}待抓取的url异常, 异常信息: {}".format(url_type, traceback.format_exc()))
+            log.error("从master获取{}待抓取的url{}异常, 异常信息: {}".format(url_type, url, traceback.format_exc()))
 
         return url
 
