@@ -12,10 +12,10 @@ Reference: https://github.com/xchaoinfo/fuck-login
 """
 
 import BeautifulSoup
+import cookielib
 import json
 import requests
 import time
-import datetime
 import traceback
 
 from conf import constant
@@ -39,9 +39,9 @@ class ZhihuParser(HtmlParser):
         username = raw_input('请输入账户：')
         password = raw_input('请输入密码：')
         if self.login(username, password):
-            log.info('模拟登陆知乎成功，开始抓取')
+            log.info('模拟用户{}登陆知乎成功，开始抓取'.format(username))
         else:
-            raise Exception('模拟登陆知乎失败')
+            raise Exception('模拟用户{}登陆知乎失败'.format(username))
 
     def login(self, username, password):
         """
@@ -50,16 +50,22 @@ class ZhihuParser(HtmlParser):
 
         login_result = False 
         session = requests.Session()
+        session.cookies = cookielib.LWPCookieJar(filename='./conf/cookies')
+        try:
+            session.cookies.load(ignore_discard=True)
+        except Exception as e:
+            log.error("cookie 加载异常".format(traceback.format_exc()))
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-            'Connection': 'keep-alive'
+            'Connection': 'keep-alive',
+            'X-Requested-With': 'XMLHttpRequest'
         }
 
         # 如果已经登录了，则不用再次登录
         res = session.get(self.PROFILE_URL, headers=headers, allow_redirects=False)
         if res.status_code == 200:
             login_result = True
-            log.info('用户已经登录')
+            log.info('用户{}已经登录,无需再使用验证码登录'.format(username))
             return login_result
 
         try:
@@ -68,8 +74,19 @@ class ZhihuParser(HtmlParser):
             log.error('获取知乎登陆的xsrf参数失败: {}'.format(traceback.format_exc()))
             return login_result
 
-        captcha_url = self.CAPTCHA_URL + str(int(time.time()*1000)) + '&type=login'
-        log.info('知乎登录的验证码url是: {}'.format(captcha_url))
+        try:
+            captcha_url = self.CAPTCHA_URL + str(int(time.time() * 1000)) + '&type=login'
+            img = session.get(captcha_url, headers=headers)
+            if img.status_code == 200:
+                with open('./conf/captcha.jpg', 'wb') as fd:
+                    fd.write(img.content)
+                    fd.close()
+            else:
+                return login_result
+        except Exception as e:
+            log.error('获取知乎登陆的验证码失败: {}'.format(traceback.format_exc()))
+            return login_result
+
         captcha = raw_input('请输入验证码：')
 
         data = {
@@ -84,12 +101,13 @@ class ZhihuParser(HtmlParser):
             res = session.post(self.LOGIN_URL, headers=headers, data=data)
             if res.status_code == 200:
                 res = res.json()
-                if isinstance(res, dict) and 'errcode' in res and res.get('errcode') and 'msg' in res:
+                if isinstance(res, dict) and 'r' in res and res.get('r') and 'msg' in res:
                     msg = res.get('msg').encode('utf8')
                     log.error('登录知乎账户失败,失败原因是: {}'.format(msg))
-                # 登陆成功
-                elif isinstance(res, dict) and 'errcode' in res and res.get('errcode') == 0:
+                # 登陆成功,保存cookie
+                elif isinstance(res, dict) and 'r' in res and res.get('r') == 0:
                     login_result = True
+                    session.cookies.save()
                     print res
         except Exception as e:
             log.error('登录知乎失败, 异常信息: {}'.format(traceback.format_exc())) 
