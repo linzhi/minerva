@@ -31,11 +31,14 @@ class ZhihuParser(HtmlParser):
     INDEX_URL = constant.SEED_URL.ZHIHU
     LOGIN_URL = 'https://www.zhihu.com/login/email'
     CAPTCHA_URL = 'https://www.zhihu.com/captcha.gif?r='
+    PROFILE_URL = "https://www.zhihu.com/settings/profile"
 
     TIMEOUT = 20
 
     def __init__(self):
-        if self.login('test', 'test'):
+        username = raw_input('请输入账户：')
+        password = raw_input('请输入密码：')
+        if self.login(username, password):
             log.info('模拟登陆知乎成功，开始抓取')
         else:
             raise Exception('模拟登陆知乎失败')
@@ -49,8 +52,15 @@ class ZhihuParser(HtmlParser):
         session = requests.Session()
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-            'Connection':'keep-alive'
+            'Connection': 'keep-alive'
         }
+
+        # 如果已经登录了，则不用再次登录
+        res = session.get(self.PROFILE_URL, headers=headers, allow_redirects=False)
+        if res.status_code == 200:
+            login_result = True
+            log.info('用户已经登录')
+            return login_result
 
         try:
             _xsrf = BeautifulSoup.BeautifulSoup(session.get(self.INDEX_URL, headers=headers).content).find('input', {'name': '_xsrf'})['value']
