@@ -41,7 +41,7 @@ class DianpingParser(HtmlParser):
         urls = None
         result = {}
 
-        urls, content = HtmlParser.get_content(url)
+        urls, content = HtmlParser.get_content(url=url)
 
         # 如果不是点评的店铺详情页的url，则退出
         poi_id = url.strip().split('/')[-1]

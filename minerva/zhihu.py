@@ -36,6 +36,8 @@ class ZhihuParser(HtmlParser):
     TIMEOUT = 20
 
     def __init__(self):
+        self.session = requests.Session()
+
         username = raw_input('请输入账户：')
         password = raw_input('请输入密码：')
         if self.login(username, password):
@@ -49,10 +51,9 @@ class ZhihuParser(HtmlParser):
         """
 
         login_result = False 
-        session = requests.Session()
-        session.cookies = cookielib.LWPCookieJar(filename='./conf/cookies')
+        self.session.cookies = cookielib.LWPCookieJar(filename='./conf/cookies')
         try:
-            session.cookies.load(ignore_discard=True)
+            self.session.cookies.load(ignore_discard=True)
         except Exception as e:
             log.error("cookie 加载异常".format(traceback.format_exc()))
         headers = {
@@ -62,21 +63,21 @@ class ZhihuParser(HtmlParser):
         }
 
         # 如果已经登录了，则不用再次登录
-        res = session.get(self.PROFILE_URL, headers=headers, allow_redirects=False)
+        res = self.session.get(self.PROFILE_URL, headers=headers, allow_redirects=False)
         if res.status_code == 200:
             login_result = True
             log.info('用户{}已经登录,无需再使用验证码登录'.format(username))
             return login_result
 
         try:
-            _xsrf = BeautifulSoup.BeautifulSoup(session.get(self.INDEX_URL, headers=headers).content).find('input', {'name': '_xsrf'})['value']
+            _xsrf = BeautifulSoup.BeautifulSoup(self.session.get(self.INDEX_URL, headers=headers).content).find('input', {'name': '_xsrf'})['value']
         except Exception as e:
             log.error('获取知乎登陆的xsrf参数失败: {}'.format(traceback.format_exc()))
             return login_result
 
         try:
             captcha_url = self.CAPTCHA_URL + str(int(time.time() * 1000)) + '&type=login'
-            img = session.get(captcha_url, headers=headers)
+            img = self.session.get(captcha_url, headers=headers)
             if img.status_code == 200:
                 with open('./conf/captcha.jpg', 'wb') as fd:
                     fd.write(img.content)
@@ -98,7 +99,7 @@ class ZhihuParser(HtmlParser):
         }
 
         try:
-            res = session.post(self.LOGIN_URL, headers=headers, data=data)
+            res = self.session.post(self.LOGIN_URL, headers=headers, data=data)
             if res.status_code == 200:
                 res = res.json()
                 if isinstance(res, dict) and 'r' in res and res.get('r') and 'msg' in res:
@@ -106,28 +107,27 @@ class ZhihuParser(HtmlParser):
                     log.error('登录知乎账户失败,失败原因是: {}'.format(msg))
                 # 登陆成功,保存cookie
                 elif isinstance(res, dict) and 'r' in res and res.get('r') == 0:
+                    log.info('用户{}登录知乎成功，返回:{}'.format(username, res))
                     login_result = True
-                    session.cookies.save()
-                    print res
+                    self.session.cookies.save()
         except Exception as e:
             log.error('登录知乎失败, 异常信息: {}'.format(traceback.format_exc())) 
 
         return login_result
 
-    @classmethod
-    def get_info(cls, url):
+    def get_zhihu_info(self, url):
         """
         @brief: 获取知乎的问题以及高赞的用户评论
         @return: urls: (['xxx', ['xxx']]); result: {'title': xxx, 'content': xxx}
         """
 
-
         # 保存从content中提取的结果
         urls = None
         result = {}
 
-        urls, content = HtmlParser.get_content(url)
+        urls, content = HtmlParser.get_content(url=url, session=self.session)
 
+        print content
         try:
             if content:
                 log.info("当前抓取的知乎url是: {}".format(url))
@@ -140,6 +140,7 @@ class ZhihuParser(HtmlParser):
 
 if __name__ == "__main__":
     zhihu = ZhihuParser()
+    zhihu.get_zhihu_info(url=constant.SEED_URL.ZHIHU)
 
 
 

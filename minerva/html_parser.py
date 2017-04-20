@@ -14,8 +14,7 @@ Author: qilinzhi@gmail.com
 import BeautifulSoup
 import chardet
 import traceback
-import urllib
-import urllib2
+import requests
 import urlparse
 
 from conf import constant
@@ -33,33 +32,32 @@ class HtmlParser(object):
         pass
 
     @classmethod
-    def parse_page(cls, url):
+    def parse_page(cls, url=None, session=None):
         """
         @brief: get html content
         """
 
         html_page = None
-        req = urllib2.Request(url=url)
-        req.add_header('User-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36')
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'
+        }
 
         try:
-            response = urllib2.urlopen(req, timeout=cls.TIMEOUT)
+            if session:
+                response = session.get(url=url, headers=headers)
+                if response.status_code == requests.codes.ok:
+                    html_page = response.text
+            else:
+                response = requests.get(url=url, headers=headers)
+                if response.status_code == requests.codes.ok:
+                    html_page = response.text
         except Exception as e:
             log.error("解析网页异常, url: {}, e: {}".format(url, traceback.format_exc()))
-        else:
-            html_page = response.read()
-            response.close()
-            try:
-                encoding = chardet.detect(html_page)['encoding']
-                if encoding and encoding != 'utf-8':
-                    html_page = html_page.decode(encoding).encode('utf-8')
-            except UnicodeDecodeError as e:
-                log.error("网页解码异常, e: {}".format(traceback.format_exc()))
         
         return html_page
 
     @classmethod
-    def get_content(cls, url):
+    def get_content(cls, url=None, session=None):
         """
         @brief: 解析url，获取页面链接和页面内容
         """
@@ -68,7 +66,7 @@ class HtmlParser(object):
         soup_context = None
 
         # 解析网页获取网页链接和网页内容
-        html_context = cls.parse_page(url)
+        html_context = cls.parse_page(url, session)
         if html_context:
             soup_context = BeautifulSoup.BeautifulSoup(html_context)
             if soup_context:
