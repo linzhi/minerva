@@ -13,6 +13,7 @@ Reference: https://github.com/xchaoinfo/fuck-login
 
 import BeautifulSoup
 import cookielib
+import hashlib
 import json
 import requests
 import time
@@ -35,22 +36,24 @@ class ZhihuParser(HtmlParser):
 
     TIMEOUT = 20
 
+    login_result = False 
+
     def __init__(self):
         self.session = requests.Session()
 
         username = raw_input('请输入账户：')
         password = raw_input('请输入密码：')
-        if self.login(username, password):
+
+        if self.login_result:
             log.info('模拟用户{}登陆知乎成功，开始抓取'.format(username))
         else:
-            raise Exception('模拟用户{}登陆知乎失败'.format(username))
+            self.login(username, password)
 
     def login(self, username, password):
         """
         @brief: 用户登录
         """
 
-        login_result = False 
         self.session.cookies = cookielib.LWPCookieJar(filename='./conf/cookies')
         try:
             self.session.cookies.load(ignore_discard=True)
@@ -65,15 +68,14 @@ class ZhihuParser(HtmlParser):
         # 如果已经登录了，则不用再次登录
         res = self.session.get(self.PROFILE_URL, headers=headers, allow_redirects=False)
         if res.status_code == 200:
-            login_result = True
+            self.login_result = True
             log.info('用户{}已经登录,无需再使用验证码登录'.format(username))
-            return login_result
+            return 
 
         try:
             _xsrf = BeautifulSoup.BeautifulSoup(self.session.get(self.INDEX_URL, headers=headers).content).find('input', {'name': '_xsrf'})['value']
         except Exception as e:
             log.error('获取知乎登陆的xsrf参数失败: {}'.format(traceback.format_exc()))
-            return login_result
 
         try:
             captcha_url = self.CAPTCHA_URL + str(int(time.time() * 1000)) + '&type=login'
@@ -82,11 +84,8 @@ class ZhihuParser(HtmlParser):
                 with open('./conf/captcha.jpg', 'wb') as fd:
                     fd.write(img.content)
                     fd.close()
-            else:
-                return login_result
         except Exception as e:
             log.error('获取知乎登陆的验证码失败: {}'.format(traceback.format_exc()))
-            return login_result
 
         captcha = raw_input('请输入验证码：')
 
@@ -108,12 +107,10 @@ class ZhihuParser(HtmlParser):
                 # 登陆成功,保存cookie
                 elif isinstance(res, dict) and 'r' in res and res.get('r') == 0:
                     log.info('用户{}登录知乎成功，返回:{}'.format(username, res))
-                    login_result = True
+                    self.login_result = True
                     self.session.cookies.save()
         except Exception as e:
             log.error('登录知乎失败, 异常信息: {}'.format(traceback.format_exc())) 
-
-        return login_result
 
     def get_zhihu_info(self, url):
         """
@@ -126,9 +123,26 @@ class ZhihuParser(HtmlParser):
         result = {}
 
         urls, content = HtmlParser.get_content(url=url, session=self.session)
+
+        # 如果不是知乎的问题详情页的url，则退出
+        question_id = filter(str.isdigit, url.encode('utf8'))
+        if not question_id or 'question/' not in url:
+            return urls, result
+
         try:
             if content:
                 log.info("当前抓取的知乎url是: {}".format(url))
+
+                # 解析页面的问题&答案
+                question_title = content.find('h1', {'class': 'QuestionHeader-title'}).text.strip().encode('utf8')
+                question_detail = content.find('div', {'class': 'QuestionHeader-detail'}).text.encode('utf8')
+                answers_detail = content.find('div', {'class': 'Question-mainColumn'})
+
+                result['url'] = url
+                result['site'] = 'zhihu'
+                result['question_id'] = int(question_id)
+                result['question_title'] = question_title
+                result['question_detail'] = question_detail
         except Exception as e:
             log.error('解析知乎url: {} 异常，异常信息: {}'.format(url, traceback.format_exc()))
         finally:
@@ -138,7 +152,8 @@ class ZhihuParser(HtmlParser):
 
 if __name__ == "__main__":
     zhihu = ZhihuParser()
-    zhihu.get_zhihu_info(url=constant.SEED_URL.ZHIHU)
+    while 1:
+        zhihu.get_zhihu_info(url='https://www.zhihu.com/question/58717455')
 
 
 

@@ -80,7 +80,7 @@ class Spider(object):
 
     def save_dianping(self, data=None):
         """
-        @brief: 将需要的点评的json格式POI数据保存到mongo
+        @brief: 将需要的点评的json格式数据保存到mongo
         """
 
         if data is None: return None
@@ -91,14 +91,34 @@ class Spider(object):
 
             ret = self.mongo_db.upsert(key, data, constant.SPIDER_MONGO_DIANPING_POI_TABLE)
             if isinstance(ret, dict) and 'errno' in ret and ret['errno'] != 0:
-                log.error("保存点评POI信息出现异常, poi info: {}".format(data))
+                log.error("保存点评信息出现异常, poi info: {}".format(data))
         else:
-            log.error("保存的点评POI信息缺少poi_id字段")
+            log.error("保存点评信息缺少poi_id字段")
+
+    def save_zhihu(self, data=None):
+        """
+        @brief: 将需要的知乎的json格式数据保存到mongo
+        """
+
+        if data is None: return None
+
+        if 'question_id' in data:
+            key = {}
+            key['question_id'] = data['question_id']
+
+            ret = self.mongo_db.upsert(key, data, constant.SPIDER_MONGO_ZHIHU_POI_TABLE)
+            if isinstance(ret, dict) and 'errno' in ret and ret['errno'] != 0:
+                log.error("保存知乎信息出现异常, poi info: {}".format(data))
+        else:
+            log.error("保存知乎信息缺少question_id字段")
 
     def run(self):
         """
         @brief: Run Spider
         """
+
+        # 初始化知乎的解析类
+        zhihu_parser = ZhihuParser()
 
         while 1:
             # 抓取点评的信息
@@ -117,6 +137,18 @@ class Spider(object):
                 continue
 
             # 抓取知乎的信息
+            url_type = 'zhihu'
+            url = self.get_url(url_type=url_type)
+            try:
+                if url:
+                    # 获取要抓取的url的超链接和内容
+                    urls, result = zhihu_parser.get_zhihu_info(url)
+                    if urls:
+                        self.send_url(urls, url_type=url_type)
+                    if result:
+                        self.save_zhihu(result)
+            except Exception as e:
+                log.error("抓取{}的url: {} 异常: {}".format(url_type, url, traceback.format_exc()))
 
 
 if __name__ == "__main__":

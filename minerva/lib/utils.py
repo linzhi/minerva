@@ -109,8 +109,8 @@ class MongoDBHandler(object):
         for i in xrange(self.retry_times):
             try:
                 self.useTbl(tbl_name)
-                if not self.conn.alive():
-                    self.connectDb()
+                #if not self.conn.alive():
+                #    self.connectDb()
                 rslt = self.conn_tbl.update(criteria, {"$set":data})
                 break
             except Exception as ex:
