@@ -48,6 +48,8 @@ class ZhihuParser(HtmlParser):
             log.info('模拟用户{}登陆知乎成功，开始抓取'.format(username))
         else:
             self.login(username, password)
+            if not self.login_result:
+                raise Exception("模拟登陆知乎失败")
 
     def login(self, username, password):
         """
