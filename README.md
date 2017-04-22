@@ -15,9 +15,6 @@ Minerva(智慧女神号)旨在提供**简单可依赖的分布式数据定向抓
 #### Usage:
 启动master: `python master.py`, 启动spider: `python spider.py`
 
-#### Tips:
-抓取知乎的信息需要输入账户,密码和验证码,如果cookie有效，则不用输入验证码
-
 #### TODO:
 + 提升系统稳定性
 

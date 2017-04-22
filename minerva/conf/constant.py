@@ -24,7 +24,7 @@ RPC_PORT = 8001
 # 种子url
 SEED_URL = {
     "dianping": "http://www.dianping.com",
-    "zhihu": "https://www.zhihu.com/",
+    "zhihu": "https://www.zhihu.com/question/56322619",
     "baidu": "http://www.baidu.com/"
 }
 

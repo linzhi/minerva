@@ -41,15 +41,17 @@ class ZhihuParser(HtmlParser):
     def __init__(self):
         self.session = requests.Session()
 
+        """
+        # 抓取知乎的问题&答案无需登录
         username = raw_input('请输入账户：')
         password = raw_input('请输入密码：')
-
         if self.login_result:
             log.info('模拟用户{}登陆知乎成功，开始抓取'.format(username))
         else:
             self.login(username, password)
             if not self.login_result:
                 raise Exception("模拟登陆知乎失败")
+        """
 
     def login(self, username, password):
         """
@@ -124,7 +126,8 @@ class ZhihuParser(HtmlParser):
         urls = None
         result = {}
 
-        urls, content = HtmlParser.get_content(url=url, session=self.session)
+        #urls, content = HtmlParser.get_content(url=url, session=self.session)
+        urls, content = HtmlParser.get_content(url=url)
 
         # 如果不是知乎的问题详情页的url，则退出
         question_id = filter(str.isdigit, url.encode('utf8'))

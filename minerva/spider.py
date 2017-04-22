@@ -117,7 +117,7 @@ class Spider(object):
         @brief: Run Spider
         """
 
-        # 初始化知乎的解析类
+        # 初始化知乎的抓取类
         zhihu_parser = ZhihuParser()
 
         while 1:
