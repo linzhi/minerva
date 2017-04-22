@@ -23,7 +23,6 @@ Minerva(智慧女神号)旨在提供**简单可依赖的分布式数据定向抓
 + redis (2.10.5)
 + thriftpy (0.3.9)
 + BeautifulSoup (3.2.1)
-+ chardet (2.3.0)
 + requests (2.13.0)
 
 

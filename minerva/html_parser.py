@@ -12,7 +12,6 @@ Author: linzhi
 """
 
 import BeautifulSoup
-import chardet
 import traceback
 import requests
 import urlparse
