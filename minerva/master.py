@@ -8,7 +8,7 @@
 
 """
 Created on 2017-04-08
-Author: qilinzhi@gmail.com
+Author: linzhi
 """
 
 import os

@@ -8,7 +8,7 @@
 
 """
 Created on 2017-04-19
-Reference: https://github.com/xchaoinfo/fuck-login
+Author: linzhi
 """
 
 import BeautifulSoup

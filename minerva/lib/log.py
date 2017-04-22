@@ -7,8 +7,8 @@
 ################################################################################
 
 """
-@authors: qilinzhi(qilinzhi@gmail.com)
-@date: 2017年04月06日
+Created on 2017-04-06
+Author: linzhi
 """
 
 import logging.config
