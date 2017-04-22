@@ -138,16 +138,30 @@ class ZhihuParser(HtmlParser):
             if content:
                 log.info("当前抓取的知乎url是: {}".format(url))
 
-                # 解析页面的问题&答案
+                # 解析页面的问题
                 question_title = content.find('h1', {'class': 'QuestionHeader-title'}).text.strip().encode('utf8')
                 question_detail = content.find('div', {'class': 'QuestionHeader-detail'}).text.encode('utf8')
-                answers_detail = content.find('div', {'class': 'Question-mainColumn'})
 
                 result['url'] = url
                 result['site'] = 'zhihu'
                 result['question_id'] = int(question_id)
                 result['question_title'] = question_title
                 result['question_detail'] = question_detail
+
+                # 解析页面的答案
+                answers = content.findAll('div', {'class': 'List-item'})
+                result['answers'] = {}
+                for answer in answers:
+                    user_id = answer.find('div', {'class': 'ContentItem AnswerItem'}).get('name')
+
+                    tmp_result = {}
+                    user_name = answer.find('img', {'class': 'Avatar AuthorInfo-avatar'}).get('alt').encode('utf8')
+                    detail = answer.find('span', {'class': 'RichText CopyrightRichText-richText'}).text.encode('utf8')
+                    tmp_result['user_name'] = user_name
+                    tmp_result['content'] = detail
+
+                    result['answers'][user_id] = tmp_result
+
         except Exception as e:
             log.error('解析知乎url: {} 异常，异常信息: {}'.format(url, traceback.format_exc()))
         finally:
@@ -157,8 +171,7 @@ class ZhihuParser(HtmlParser):
 
 if __name__ == "__main__":
     zhihu = ZhihuParser()
-    while 1:
-        zhihu.get_zhihu_info(url='https://www.zhihu.com/question/58717455')
+    zhihu.get_zhihu_info(url='https://www.zhihu.com/question/56322619')
 
 
 

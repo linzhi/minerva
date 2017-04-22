@@ -107,8 +107,9 @@ class Spider(object):
             key['question_id'] = data['question_id']
 
             ret = self.mongo_db.upsert(key, data, constant.SPIDER_MONGO_ZHIHU_POI_TABLE)
-            if isinstance(ret, dict) and 'errno' in ret and ret['errno'] != 0:
-                log.error("保存知乎信息出现异常, poi info: {}".format(data))
+            if isinstance(ret, dict) and 'errno' in ret and ret['errno'] != 0 and 'errmsg' in ret:
+                errmsg = ret['errmsg']
+                log.error("保存知乎信息出现异常, errmsg: {}".format(errmsg))
         else:
             log.error("保存知乎信息缺少question_id字段")
 
