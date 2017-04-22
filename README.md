@@ -15,9 +15,6 @@ Minerva(智慧女神号)旨在提供**简单可依赖的分布式数据定向抓
 #### Usage:
 启动master: `python master.py`, 启动spider: `python spider.py`
 
-#### TODO:
-+ 提升系统稳定性
-
 #### 相关的依赖库:
 + pymongo (3.4.0)
 + redis (2.10.5)
