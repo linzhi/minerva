@@ -152,16 +152,13 @@ class ZhihuParser(HtmlParser):
                 answers = content.findAll('div', {'class': 'List-item'})
                 result['answers'] = {}
                 for answer in answers:
-                    user_id = answer.find('div', {'class': 'ContentItem AnswerItem'}).get('name')
-
                     tmp_result = {}
+                    user_id = answer.find('div', {'class': 'ContentItem AnswerItem'}).get('name')
                     user_name = answer.find('img', {'class': 'Avatar AuthorInfo-avatar'}).get('alt').encode('utf8')
                     detail = answer.find('span', {'class': 'RichText CopyrightRichText-richText'}).text.encode('utf8')
                     tmp_result['user_name'] = user_name
                     tmp_result['content'] = detail
-
                     result['answers'][user_id] = tmp_result
-
         except Exception as e:
             log.error('解析知乎url: {} 异常，异常信息: {}'.format(url, traceback.format_exc()))
         finally:
