@@ -42,7 +42,7 @@ class ZhihuParser(HtmlParser):
         self.session = requests.Session()
 
         """
-        # 抓取知乎的问题&答案无需登录
+        # 抓取知乎的问题&答案无需登录,因此注释掉登录部分代码
         username = raw_input('请输入账户：')
         password = raw_input('请输入密码：')
         if self.login_result:
