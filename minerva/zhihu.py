@@ -87,7 +87,6 @@ class ZhihuParser(HtmlParser):
             if img.status_code == 200:
                 with open('./conf/captcha.jpg', 'wb') as fd:
                     fd.write(img.content)
-                    fd.close()
         except Exception as e:
             log.error('获取知乎登陆的验证码失败: {}'.format(traceback.format_exc()))
 
